@@ -74,6 +74,14 @@
 #define min(A,B) ( (A) < (B) ? (A):(B))
 #endif
 
+#if !defined(IPV6_ADD_MEMBERSHIP) && defined(IPV6_JOIN_GROUP)
+#define IPV6_ADD_MEMBERSHIP IPV6_JOIN_GROUP
+#endif
+
+#if !defined(IPV6_DROP_MEMBERSHIP) && defined(IPV6_LEAVE_GROUP)
+#define IPV6_DROP_MEMBERSHIP IPV6_LEAVE_GROUP
+#endif
+
 #include "LinkedList.h"
 #include "Tree.h"
 
