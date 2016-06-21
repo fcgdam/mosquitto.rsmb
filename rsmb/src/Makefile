@@ -26,7 +26,9 @@ ifndef GCC
   GCC = gcc
 endif
 
-all: broker broker_dbg broker_mqtts rsmb.ini
+TARGETS = broker broker_dbg broker_mqtts rsmb.ini
+
+all: $(TARGETS)
 
 broker: *.c *.h 
 	${GCC} -Wall -s -Os *.c -o broker
@@ -43,5 +45,7 @@ broker_mqtts32: *.c *.h
 rsmb.ini: *.h
 	perl tools/be/be.pl
 
-endif
+clean:
+	rm -f $(TARGETS)
 
+endif
