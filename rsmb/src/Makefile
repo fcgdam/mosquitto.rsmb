@@ -22,8 +22,8 @@ rsmb.ini: *.h
 
 else
 
-ifndef GCC
-  GCC = gcc
+ifndef CC
+  CC = gcc
 endif
 
 TARGETS = broker broker_dbg broker_mqtts rsmb.ini
@@ -31,16 +31,16 @@ TARGETS = broker broker_dbg broker_mqtts rsmb.ini
 all: $(TARGETS)
 
 broker: *.c *.h 
-	${GCC} -Wall -s -Os *.c -o broker
+	$(CC) -Wall -Os *.c -o broker
 
 broker_dbg: *.c *.h
-	${GCC} -Wall -ggdb *.c -o broker_dbg
+	$(CC) -Wall -ggdb *.c -o broker_dbg
 
 broker_mqtts: *.c *.h
-	${GCC} -DMQTTS -Wall -s -Os *.c -o broker_mqtts
+	$(CC) -DMQTTS -Wall -Os *.c -o broker_mqtts
 	
 broker_mqtts32: *.c *.h
-	${GCC} -m32 -DMQTTS -Wall -s -Os *.c -o broker_mqtts32
+	$(CC) -m32 -DMQTTS -Wall -Os *.c -o broker_mqtts32
 
 rsmb.ini: *.h
 	perl tools/be/be.pl
