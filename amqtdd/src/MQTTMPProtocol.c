@@ -32,7 +32,7 @@
 /**
  * Broker state structure.
  */
-BrokerStates* bstate;
+extern BrokerStates* bstate;
 
 /**
  * List to manage the available virtual socket numbers
