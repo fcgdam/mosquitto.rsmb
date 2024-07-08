@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2008, 2013 IBM Corp.
  *
  * All rights reserved. This program and the accompanying materials
@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "Heap.h"
 
@@ -1050,15 +1051,19 @@ int MQTTSPacket_send_register(Clients* client, int topicId, char* topicName, int
 }
 
 
-int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id, short duration)
+int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id, short duration, int hops)
 {
 	PacketBuffer buf;
 	int rc = 0;
 
 	FUNC_ENTRY;
 	buf = MQTTSPacketSerialize_advertise(gateway_id, duration);
-	
-	rc = MQTTSPacket_sendPacketBuffer(sock, address, buf);
+
+	if (setsockopt(sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hops , sizeof(hops)) < 0) {
+		rc = errno;
+	} else {
+		rc = MQTTSPacket_sendPacketBuffer(sock, address, buf);
+	}
 	free(buf.data);
 
 	Log(LOG_PROTOCOL, 30, NULL, sock, "", address, gateway_id, duration, rc);

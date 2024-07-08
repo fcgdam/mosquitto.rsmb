@@ -179,7 +179,7 @@ void MQTTSProtocol_housekeeping()
 			{
 				MQTTSPacket_send_advertise(listener->socket,
 						listener->advertise->address, listener->advertise->gateway_id,
-						listener->advertise->interval);
+						listener->advertise->interval, listener->advertise->hops);
 				listener->advertise->last = now;
 			}
 		}
@@ -278,7 +278,7 @@ int MQTTSProtocol_handleAdvertises(void* pack, int sock, char* clientAddr, Clien
 	topic = malloc(40);
 	sprintf(topic, "$SYS/broker/mqtts/listener/%d", listener->port);
 
-	data = malloc(80);
+	data = malloc(180);
 	offset = strftime(data, 60, "%Y%m%d %H%M%S ", timeinfo);
 	sprintf(&data[offset], "advertise from %s gateway id: %d duration: %d",
 			clientAddr, advertisePack->gwId, advertisePack->duration);

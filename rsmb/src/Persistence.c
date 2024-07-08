@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2007, 2013 IBM Corp.
  *
  * All rights reserved. This program and the accompanying materials
@@ -573,13 +573,18 @@ Persistence_process_file(FILE* cfile, BrokerStates* bs, property* propsTable, in
 							/* advertise address interval gateway_id */
 							advertise_parms* adv = malloc(sizeof(advertise_parms));
 							memset(adv, '\0', sizeof(advertise_parms));
+							adv->hops = 1;
 							adv->address = malloc(strlen(val) + 1);
 							strcpy(adv->address, val);
 							if ((val = strtok_r(NULL, delims, &curpos)))
 							{
 								adv->interval = atoi(val);
-								if ((val = strtok_r(NULL, delims, &curpos)))
-								  adv->gateway_id = atoi(val);
+								if ((val = strtok_r(NULL, delims, &curpos))) {
+									adv->gateway_id = atoi(val);
+									if ((val = strtok_r(NULL, delims, &curpos))) {
+										adv->hops = atoi(val);
+									}
+								}
 							}
 							((Listener*)s)->advertise = adv;
 						}

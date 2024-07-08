@@ -295,7 +295,7 @@ int MQTTSPacket_send_pubcomp(Clients* client, int msgId);
 int MQTTSPacket_send_subAck(Clients* client, MQTTS_Subscribe* sub, int topicId, int qos, char returnCode);
 int MQTTSPacket_send_unsubAck(Clients* client, int msgId);
 int MQTTSPacket_send_register(Clients* client, int topicId, char* topicName, int msgId);
-int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id, short duration);
+int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id, short duration, int hops);
 
 
 int MQTTSPacket_send_connect(Clients* client);

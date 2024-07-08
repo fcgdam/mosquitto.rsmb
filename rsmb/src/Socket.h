@@ -103,7 +103,7 @@ typedef struct
 	unsigned char gateway_id;
 	int interval;
 	time_t last;
-	//int hops;
+	int hops;
 	//char* interface;
 } advertise_parms;
 
