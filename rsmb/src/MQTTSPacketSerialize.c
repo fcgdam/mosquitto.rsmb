@@ -85,6 +85,23 @@ PacketBuffer MQTTSPacketSerialize_advertise(unsigned char gateway_id, short dura
 	return buf;
 }
 
+PacketBuffer MQTTSPacketSerialize_gwinfo(unsigned char gateway_id)
+{
+	MQTTSHeader header;
+	PacketBuffer buf;
+	
+	FUNC_ENTRY;
+	header.len = 3;
+	header.type = MQTTS_GWINFO;
+	
+	buf = MQTTSPacketSerialize_header(header);
+
+	writeChar(&buf.ptr, gateway_id);
+	
+	FUNC_EXIT;
+	return buf;
+}
+
 
 PacketBuffer MQTTSPacketSerialize_connect(int cleansession, int will, char protocolID, short keepAlive, char* clientID)
 {

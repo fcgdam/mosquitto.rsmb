@@ -28,6 +28,7 @@ typedef struct
 
 PacketBuffer MQTTSPacketSerialize_ack(char type, int msgId);
 PacketBuffer MQTTSPacketSerialize_advertise(unsigned char gateway_id, short duration);
+PacketBuffer MQTTSPacketSerialize_gwinfo(unsigned char gateway_id);
 PacketBuffer MQTTSPacketSerialize_connect(int cleansession, int will, char protocolID, short keepAlive, char* clientID);
 PacketBuffer MQTTSSerialize_connack(int returnCode);
 

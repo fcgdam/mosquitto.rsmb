@@ -107,6 +107,13 @@ typedef struct
 	//char* interface;
 } advertise_parms;
 
+typedef struct
+{
+    char* address;
+    unsigned char gateway_id;
+    int hops;
+} gwinfo_parms;
+
 /*BE
 def SOCKADDR_IN
 {
@@ -163,6 +170,7 @@ typedef struct
 #if defined(MQTTS)
 	List* multicast_groups;
 	advertise_parms* advertise;
+	gwinfo_parms* gwinfo;
 	int loopback;
 #endif
 #if defined(USE_POLL)

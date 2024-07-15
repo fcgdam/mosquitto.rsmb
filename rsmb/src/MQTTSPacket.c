@@ -1072,6 +1072,26 @@ int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id
 }
 
 
+int MQTTSPacket_send_gwinfo(int sock, char* address, unsigned char gateway_id, int hops)
+{
+	PacketBuffer buf;
+	int rc = 0;
+
+	FUNC_ENTRY;
+	buf = MQTTSPacketSerialize_gwinfo(gateway_id);
+
+	if (setsockopt(sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hops , sizeof(hops)) < 0) {
+		rc = errno;
+	} else {
+		rc = MQTTSPacket_sendPacketBuffer(sock, address, buf);
+	}
+	free(buf.data);
+
+	Log(LOG_PROTOCOL, 35, NULL, sock, "", address, gateway_id, rc);
+	FUNC_EXIT_RC(rc);
+	return rc;
+}
+
 /****************************************************************/
 /* client/bridge specific sends                                 */
 /****************************************************************/

@@ -240,6 +240,7 @@ void MQTTSProtocol_timeslice(int sock)
 	}
 	else if (client == NULL &&  pack->header.type != MQTTS_CONNECT &&
 			pack->header.type != MQTTS_ADVERTISE && pack->header.type != MQTTS_SEARCHGW &&
+            pack->header.type != MQTTS_GWINFO &&
 			(pack->header.type != MQTTS_PUBLISH || ((MQTTS_Publish*)pack)->flags.QoS != 3))
 	{
 			Log(LOG_WARNING, 23, NULL, sock, Socket_getpeer(sock), MQTTSPacket_name(pack->header.type));
@@ -295,12 +296,32 @@ int MQTTSProtocol_handleAdvertises(void* pack, int sock, char* clientAddr, Clien
 
 int MQTTSProtocol_handleSearchGws(void* pack, int sock, char* clientAddr, Clients* client)
 {
+    //MQTTS_SearchGW* searchGwPack = (MQTTS_SearchGW*)pack;
+	Listener* listener = NULL;
+
+	FUNC_ENTRY;
+	Log(LOG_PROTOCOL, 32, NULL, sock, "", clientAddr );
+
+    listener = Socket_getParentListener(sock);
+
+    if ( listener->gwinfo )
+    {
+        MQTTSPacket_send_gwinfo( listener->socket, listener->gwinfo->address, 
+                    listener->gwinfo->gateway_id, listener->gwinfo->hops );
+    }
+
+    MQTTSPacket_free_packet(pack);
+	FUNC_EXIT;
 	return 0;
 }
 
 
 int MQTTSProtocol_handleGwInfos(void* pack, int sock, char* clientAddr, Clients* client)
 {
+    FUNC_ENTRY;
+
+    MQTTSPacket_free_packet(pack);
+    FUNC_EXIT;
 	return 0;
 }
 

@@ -167,6 +167,7 @@ property listenerProps[] =
 #if defined(MQTTS)
 	{ "multicast_groups", 3, offsetof(Listener, multicast_groups) },
 	{ "advertise", 1, offsetof(Listener, advertise) },
+	{ "gwinfo", 1, offsetof(Listener, gwinfo) },
 	{ "loopback", PROPERTY_INT, offsetof(Listener, loopback) },
 #endif
 	{ "connection", 1, offsetof(BridgeConnections, name) },
@@ -588,6 +589,22 @@ Persistence_process_file(FILE* cfile, BrokerStates* bs, property* propsTable, in
 							}
 							((Listener*)s)->advertise = adv;
 						}
+						else if (strcmp(pword, "gwinfo") == 0)
+						{
+                            gwinfo_parms* gwinf = malloc(sizeof(gwinfo_parms));
+                            memset(gwinf, '\0', sizeof(gwinfo_parms));
+                            gwinf->hops = 1;
+                            gwinf->address = malloc(strlen(val) + 1);
+                            strcpy(gwinf->address, val);							
+                            if ((val = strtok_r(NULL, delims, &curpos)))
+                            {
+                                gwinf->gateway_id = atoi(val);
+								if ((val = strtok_r(NULL, delims, &curpos))) {
+                                	gwinf->hops = atoi(val);
+								}
+                            }
+							((Listener*)s)->gwinfo = gwinf;
+						}	
 						else
 #endif
 #endif
@@ -808,6 +825,11 @@ void Persistence_free_config(BrokerStates* bs)
 			free(list->advertise->address);
 			free(list->advertise);
 		}
+        if (list->gwinfo)
+        {
+			free(list->gwinfo->address);
+            free(list->gwinfo);
+        }
 #endif
 	}
 	ListFree(bs->listeners);
