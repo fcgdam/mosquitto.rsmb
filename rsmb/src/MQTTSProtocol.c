@@ -177,9 +177,10 @@ void MQTTSProtocol_housekeeping()
 				time(&(now));
 			if (difftime(now, listener->advertise->last) > listener->advertise->interval)
 			{
-				MQTTSPacket_send_advertise(listener->socket,
-						listener->advertise->address, listener->advertise->gateway_id,
-						listener->advertise->interval, listener->advertise->hops);
+    			MQTTSPacket_send_advertise(listener->socket,
+					listener->advertise->address, listener->advertise->gateway_id,
+					listener->advertise->interval, listener->advertise->hops, 
+                    listener->ipv6 );
 				listener->advertise->last = now;
 			}
 		}
@@ -206,7 +207,6 @@ void MQTTSProtocol_timeslice(int sock)
 	if (client == NULL)
 		client = Protocol_getoutboundclient(sock);
 #endif
-
 	if (pack == NULL)
 	{
 		if (error == SOCKET_ERROR || error == UDPSOCKET_INCOMPLETE)
@@ -307,7 +307,8 @@ int MQTTSProtocol_handleSearchGws(void* pack, int sock, char* clientAddr, Client
     if ( listener->gwinfo )
     {
         MQTTSPacket_send_gwinfo( listener->socket, listener->gwinfo->address, 
-                    listener->gwinfo->gateway_id, listener->gwinfo->hops );
+                    listener->gwinfo->gateway_id, listener->gwinfo->hops,
+                    listener->ipv6 );
     }
 
     MQTTSPacket_free_packet(pack);

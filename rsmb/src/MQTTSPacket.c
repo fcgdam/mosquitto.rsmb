@@ -1051,7 +1051,7 @@ int MQTTSPacket_send_register(Clients* client, int topicId, char* topicName, int
 }
 
 
-int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id, short duration, int hops)
+int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id, short duration, int hops, int ipv6)
 {
 	PacketBuffer buf;
 	int rc = 0;
@@ -1059,11 +1059,22 @@ int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id
 	FUNC_ENTRY;
 	buf = MQTTSPacketSerialize_advertise(gateway_id, duration);
 
-	if (setsockopt(sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hops , sizeof(hops)) < 0) {
-		rc = errno;
-	} else {
-		rc = MQTTSPacket_sendPacketBuffer(sock, address, buf);
-	}
+    if ( ipv6 )
+    {
+        if (setsockopt(sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hops , sizeof(hops)) < 0) {
+            rc = errno;
+        }
+    } else {
+        if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &hops , sizeof(hops)) < 0) {
+            rc = errno;
+        }
+    }
+
+    if ( rc == 0 )
+    {
+        rc = MQTTSPacket_sendPacketBuffer(sock, address, buf);
+    }
+
 	free(buf.data);
 
 	Log(LOG_PROTOCOL, 30, NULL, sock, "", address, gateway_id, duration, rc);
@@ -1072,7 +1083,7 @@ int MQTTSPacket_send_advertise(int sock, char* address, unsigned char gateway_id
 }
 
 
-int MQTTSPacket_send_gwinfo(int sock, char* address, unsigned char gateway_id, int hops)
+int MQTTSPacket_send_gwinfo(int sock, char* address, unsigned char gateway_id, int hops, int ipv6 )
 {
 	PacketBuffer buf;
 	int rc = 0;
@@ -1080,11 +1091,22 @@ int MQTTSPacket_send_gwinfo(int sock, char* address, unsigned char gateway_id, i
 	FUNC_ENTRY;
 	buf = MQTTSPacketSerialize_gwinfo(gateway_id);
 
-	if (setsockopt(sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hops , sizeof(hops)) < 0) {
-		rc = errno;
+    if ( ipv6 )
+    {
+    	if (setsockopt(sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hops , sizeof(hops)) < 0) {
+	    	rc = errno;
+        }
 	} else {
+    	if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &hops , sizeof(hops)) < 0) {
+	    	rc = errno;
+        }
+    }
+
+    if ( rc == 0 )
+    {
 		rc = MQTTSPacket_sendPacketBuffer(sock, address, buf);
 	}
+
 	free(buf.data);
 
 	Log(LOG_PROTOCOL, 35, NULL, sock, "", address, gateway_id, rc);
